@@ -34,12 +34,18 @@ import           GHC.TypeLits               (KnownNat, KnownSymbol, natVal,
                                              symbolVal)
 import           Network.HTTP.Types         hiding (Header, ResponseHeaders)
 import           Network.Socket             (SockAddr)
-import           Network.Wai                (Application, Request, Response,
-                                             httpVersion, isSecure,
-                                             lazyRequestBody,
-                                             rawQueryString, remoteHost,
-                                             requestHeaders, requestMethod,
-                                             responseLBS, vault)
+-- import           Network.Wai                (Application, Request, Response,
+--                                              httpVersion, isSecure,
+--                                              lazyRequestBody,
+--                                              rawQueryString, remoteHost,
+--                                              requestHeaders, requestMethod,
+--                                              responseLBS, vault)
+import           Servant.Server.Backend     (Application, Request, Response,
+                                            httpVersion, isSecure,
+                                            lazyRequestBody,
+                                            rawQueryString, remoteHost,
+                                            requestHeaders, requestMethod,
+                                            responseLBS, vault)
 import           Prelude                    ()
 import           Prelude.Compat
 import           Web.HttpApiData            (FromHttpApiData)
@@ -68,8 +74,8 @@ import           Servant.Server.Internal.RoutingApplication
 import           Servant.Server.Internal.ServantErr
 
 
-class HasServer layout context where
-  type ServerT layout (m :: * -> *) :: *
+class ServerBackend b => HasServer b layout context where
+  type ServerT b layout (m :: * -> *) :: *
 
   route ::
        Proxy layout
@@ -77,7 +83,7 @@ class HasServer layout context where
     -> Delayed env (Server layout)
     -> Router env
 
-type Server layout = ServerT layout Handler
+type Server layout = ServerT b layout Handler
 
 -- * Instances
 
